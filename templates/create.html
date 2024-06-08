@@ -1,0 +1,53 @@
+<link rel="stylesheet" href="../static/styles/create.css" media="screen">
+<script class="u-script" type="text/javascript" src="../static/styles/create.js" defer=""></script>
+<body>
+	<div class="container" id="container">
+		<div class="form-container sign-up-container">
+			<form action="/signup" method="POST">
+				<h1>Create Account </h1>
+				
+				<span>or use your email for registration</span>
+				<input type="text" placeholder="Name" name="name"  />
+				<input type="email" placeholder="Email" name="email" />
+				<input type="password" placeholder="Password" name="password" />
+				<input type="submit" value="Sign Up" class="btn-btn-1" />
+				{% for message in get_flashed_messages() %}
+						{{message}}
+	 
+					{% endfor %}
+			</form>
+			<h1 >{{info}}</h1>
+		</div>
+		<div class="form-container sign-in-container">
+			<form action="/login" method="POST">
+				<h1>Sign in</h1>
+
+		
+				<span>use your account</span>
+				<input type="email" placeholder="Email" name="email" />
+				<input type="password" placeholder="Password" name="password" />
+				<a href="#">Forgot your password?</a>
+				<input type="submit" value="Sign in" class="btn-btn-1">
+				{% for message in get_flashed_messages() %}
+						{{message}}
+			
+					{% endfor %}
+			</form>
+			<h1 >{{info}}</h1>
+		</div>
+		<div class="overlay-container">
+			<div class="overlay">
+				<div class="overlay-panel overlay-left">
+					<h1>Welcome Back!</h1>
+					<p>To keep connected with us please login with your personal info</p>
+					<button class="ghost" id="signIn">Sign In</button>
+				</div>
+				<div class="overlay-panel overlay-right">
+					<h1>Hello, Friend!</h1>
+					<p>Enter your personal details and start journey with us</p>
+					<button class="ghost" id="signUp">Sign Up</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>

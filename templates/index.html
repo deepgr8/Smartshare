@@ -1,0 +1,76 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Share - Smart Sharing</title>
+  <link rel="stylesheet" href="../static/styles/style.css">
+  <!-- <img src="../static/styles/Smart.png" alt="" class="logo"/> -->
+  <img src="../static/styles/Smart.png" class="img-fluid, logo" alt="">
+</head>
+<body>
+  <script>
+      function validateform(){
+          if (document.getElementsByName("nameinput").value==""){
+              alert("Name must be filled out")
+              return false;
+          }
+      }
+  </script>
+  <section class="createaccount">
+      <div class="account-container">
+
+        <!-- <button class="login" type="button">Log in</button> -->
+        <!--<a href="/create" class="login" style="padding: 10px 20px; text-shadow: 0 2px 8px rgba(128,128,128,1);" >Log in</a>
+        <a href="/create" class="signup" style="padding: 10px 20px; text-shadow: 0 2px 8px rgba(128,128,128,1);" >Sign up</a>-->
+        <form action="/search" method="Post"> 
+          <button class="btn"type="submit" placeholder="Submit" name="search" style="margin-top: 36px;">Downloads</button>
+        </form> 
+      </div>   
+  </section>
+  <div class="main-div">
+    <div>
+  <section class="upload-files">
+        <div class="drop-zone">
+          <div class="icon-container">
+            <img src="../static/styles/image2vector.svg" alt="file icon" class="center" draggable="false">
+            <img src="../static/styles/image2vector.svg" alt="file icon" class="left" draggable="false">
+            <img src="../static/styles/image2vector.svg" alt="file icon" class="right" draggable="false">
+          <form action="/uploader" method="POST" enctype="multipart/form-data" name="myForm" onsubmit="return validateform()">
+              <label for="nameInput" class="namee">Enter Your Full Name</label>
+            <input type="text" id="nameInput" name=nameinput class=nameTab>
+            <input type="file" id="fileInput" name=fileinput class=inputTab>
+            <button class="inputBtn" type="submit">Submit</button>
+          </form>
+        </div>
+
+
+      <a href="/create" style="
+        margin-top: 15rem;
+        position: absolute;">Not a member? Create account</a>
+      <div class="alert alert-primary" id="successMessage" role="alert" style="margin-top: 11rem;
+      position: absolute;
+      color:rgb(47, 248, 47);
+      font-family:Georgia, 'Times New Roman', Times, serif;
+      cursor: pointer;">
+          {% with message=get_flashed_messages() %}
+
+            <p>{{ message }}</p>
+          {% endwith %}
+
+      </div>
+  </section>
+</div>
+     
+  <div class="image-vector">
+      <img src="../static/undraw-upload.svg" alt="" class="image-vector">
+  </div>
+
+
+</div>
+    <script type="text/javascript">window.setTimeout("document.getElementById('successMessage').style.display='none';", 4000); </script>
+
+    <script src="../static/index.js"></script>
+
+</body>
+</html>

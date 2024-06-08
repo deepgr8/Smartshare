@@ -1,0 +1,68 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Share - Smart Sharing</title>
+  <link rel="stylesheet" href="../static/styles/dash.css">
+  <img src="../static/styles/Smart.png" alt="" class="img-fluid, logo"/>
+
+</head>
+<body>
+     <section class="createaccount">
+          <div class="account-container">
+          <form action="/logout" method="POST">
+            <button class="logoutt" type="submit">Log out</button>
+          </form>  
+          <div class="search">
+            <form action="/search" method="POST">
+              <!-- <input type="text" placeholder="Search" name="search" id="search"> -->
+              <button class="btn"type="submit" placeholder="Submit" name="search">Downloads</button>
+            </form>
+          </div>
+              
+          
+          
+         
+          </div>
+     </section>
+</section>
+ <div class="main-div"> 
+   <div>
+<section class="upload-files" style="height: 21rem;">
+  <div class="drop-zone">
+    <div class="icon-container" style="margin-top: rem;">
+      <img src="../static/styles/image2vector.svg" alt="file icon" class="center" draggable="false">
+      <img src="../static/styles/image2vector.svg" alt="file icon" class="left" draggable="false">
+      <img src="../static/styles/image2vector.svg" alt="file icon" class="right" draggable="false">
+    </div>
+          <form action="/upload" method="POST" enctype="multipart/form-data">
+            <input type="file" id="fileInput" name=fileinput class="inputTab inputTab2" >
+            <button class="inputBtn inputBtn2" type="submit" >Submit</button>
+          </form>
+        <a href="/create" style="margin-top: 15rem;
+        position: absolute;">Not a member? Create account</a>
+      <div class="alert alert-primary" id="successMessage" role="alert" style="margin-top: 11rem;
+      position: absolute;
+      color:rgb(47, 248, 47);
+      font-family:Georgia, 'Times New Roman', Times, serif;
+      cursor: pointer;">
+          {% with message=get_flashed_messages() %}
+
+            <p>{{ message }}</p>
+          {% endwith %}
+
+      </div>
+     
+    </section>
+  </div> 
+    <div class="image-vector">
+      <img src="../static/undraw-upload.svg" alt="" class="image-vector">
+    </div>
+  </div>
+     <script type="text/javascript">window.setTimeout("document.getElementById('successMessage').style.display='none';", 4000); </script>
+    <script src="../static/index.js"></script>
+
+</body>
+</html>
+          

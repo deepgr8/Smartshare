@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "475987322832",
+    "firebase_url": "https://website-app-5771d-default-rtdb.firebaseio.com",
+    "project_id": "website-app-5771d",
+    "storage_bucket": "website-app-5771d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:475987322832:android:0f86b5932f96fcd7da3bd5",
+        "android_client_info": {
+          "package_name": "in.pinterest.com"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "475987322832-knc7o2l4n17sivhp3ua5hrt3ijg733td.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-mZQQxst_cQoiILe6gM8Z_Za6NHNOE9E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "475987322832-knc7o2l4n17sivhp3ua5hrt3ijg733td.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
