@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -5,72 +6,144 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>The Share - Smart Sharing</title>
   <link rel="stylesheet" href="../static/styles/style.css">
-  <!-- <img src="../static/styles/Smart.png" alt="" class="logo"/> -->
-  <img src="../static/styles/Smart.png" class="img-fluid, logo" alt="">
 </head>
 <body>
   <script>
-      function validateform(){
-          if (document.getElementsByName("nameinput").value==""){
-              alert("Name must be filled out")
-              return false;
-          }
+    function validateform() {
+      const nameInput = document.getElementById("nameInput").value;
+      if (nameInput.trim() === "") {
+        alert("Name must be filled out");
+        return false;
       }
+    }
   </script>
-  <section class="createaccount">
-      <div class="account-container">
+<style>
+  .upload-files {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+  }
+  
+  .drop-zone {
+      background: #fff;
+      border: 2px dashed #ddd;
+      border-radius: 10px;
+      padding: 2rem;
+      text-align: center;
+      position: relative;
+      margin: 1rem;
+  }
+  
+  .icon-container {
+      margin-bottom: 2rem;
+  }
+  
+  .file-icon {
+      max-width: 100%;
+      height: auto;
+      width: 200px;
+  }
+  
+  .label {
+      display: block;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      color: #333;
+  }
+  
+  .input-field {
+      width: 100%;
+      max-width: 400px;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+  }
+  
+  .button-submit {
+      background-color: #4a90e2;
+      color: white;
+      padding: 0.8rem 2rem;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+  }
+  
+  .button-submit:hover {
+      background-color: #357abd;
+  }
+  
+  .create-account {
+      display: block;
+      margin-top: 1rem;
+      color: #4a90e2;
+      text-decoration: none;
+  }
+  
+  
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+      .drop-zone {
+          padding: 1rem;
+          margin: 0.5rem;
+      }
+  
+      .input-field {
+          max-width: 100%;
+      }
+  
+      .file-icon {
+          width: 150px;
+      }
+  
+      .button-submit {
+          width: 100%;
+          max-width: 400px;
+      }
+  }
+  
+  </style>
 
-        <!-- <button class="login" type="button">Log in</button> -->
-        <!--<a href="/create" class="login" style="padding: 10px 20px; text-shadow: 0 2px 8px rgba(128,128,128,1);" >Log in</a>
-        <a href="/create" class="signup" style="padding: 10px 20px; text-shadow: 0 2px 8px rgba(128,128,128,1);" >Sign up</a>-->
-        <form action="/search" method="Post"> 
-          <button class="btn"type="submit" placeholder="Submit" name="search" style="margin-top: 36px;">Downloads</button>
-        </form> 
-      </div>   
-  </section>
-  <div class="main-div">
-    <div>
-  <section class="upload-files">
-        <div class="drop-zone">
-          <div class="icon-container">
-            <img src="../static/styles/image2vector.svg" alt="file icon" class="center" draggable="false">
-            <img src="../static/styles/image2vector.svg" alt="file icon" class="left" draggable="false">
-            <img src="../static/styles/image2vector.svg" alt="file icon" class="right" draggable="false">
-          <form action="/uploader" method="POST" enctype="multipart/form-data" name="myForm" onsubmit="return validateform()">
-              <label for="nameInput" class="namee">Enter Your Full Name</label>
-            <input type="text" id="nameInput" name=nameinput class=nameTab>
-            <input type="file" id="fileInput" name=fileinput class=inputTab>
-            <button class="inputBtn" type="submit">Submit</button>
-          </form>
-        </div>
 
-
-      <a href="/create" style="
-        margin-top: 15rem;
-        position: absolute;">Not a member? Create account</a>
-      <div class="alert alert-primary" id="successMessage" role="alert" style="margin-top: 11rem;
-      position: absolute;
-      color:rgb(47, 248, 47);
-      font-family:Georgia, 'Times New Roman', Times, serif;
-      cursor: pointer;">
-          {% with message=get_flashed_messages() %}
-
-            <p>{{ message }}</p>
-          {% endwith %}
-
+    <div class="main-div">
+      <div class="header">
+        <form action="/search" method="POST">
+          <button class="button-download" type="submit" name="search">Downloads</button>
+        </form>
       </div>
-  </section>
-</div>
-     
-  <div class="image-vector">
-      <img src="../static/undraw-upload.svg" alt="" class="image-vector">
-  </div>
-
-
-</div>
-    <script type="text/javascript">window.setTimeout("document.getElementById('successMessage').style.display='none';", 4000); </script>
-
+  
+      <section class="upload-files">
+        <div class="drop-zone">
+            <div class="icon-container">
+                <img src="../static/file-sharing.png" alt="file icon" draggable="false" class="file-icon">
+            </div>
+            <form action="/uploader" method="POST" enctype="multipart/form-data" name="myForm" onsubmit="return validateform()">
+                <label for="nameInput" class="label">Enter Your Full Name</label>
+                <input type="text" id="nameInput" name="nameinput" class="input-field">
+                <input type="file" id="fileInput" name="fileinput" class="input-field">
+                <button class="button-submit" type="submit">Submit</button>
+            </form>
+            <a href="/create" class="create-account">Not a member? Create account</a>
+        </div>
+    </section>
+  
+      <div class="alert" id="successMessage" role="alert">
+        {% with message=get_flashed_messages() %}
+        <p>{{ message }}</p>
+        {% endwith %}
+      </div>
+    </div>
+  
+    <script>
+      window.setTimeout(() => {
+        const successMessage = document.getElementById("successMessage");
+        if (successMessage) successMessage.style.display = 'none';
+      }, 4000);
+    </script>
     <script src="../static/index.js"></script>
-
 </body>
 </html>

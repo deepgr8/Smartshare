@@ -1,53 +1,327 @@
-<link rel="stylesheet" href="../static/styles/create.css" media="screen">
-<script class="u-script" type="text/javascript" src="../static/styles/create.js" defer=""></script>
-<body>
-	<div class="container" id="container">
-		<div class="form-container sign-up-container">
-			<form action="/signup" method="POST">
-				<h1>Create Account </h1>
-				
-				<span>or use your email for registration</span>
-				<input type="text" placeholder="Name" name="name"  />
-				<input type="email" placeholder="Email" name="email" />
-				<input type="password" placeholder="Password" name="password" />
-				<input type="submit" value="Sign Up" class="btn-btn-1" />
-				{% for message in get_flashed_messages() %}
-						{{message}}
-	 
-					{% endfor %}
-			</form>
-			<h1 >{{info}}</h1>
-		</div>
-		<div class="form-container sign-in-container">
-			<form action="/login" method="POST">
-				<h1>Sign in</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #818cf8;
+            --white: #ffffff;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-700: #374151;
+        }
 
-		
-				<span>use your account</span>
-				<input type="email" placeholder="Email" name="email" />
-				<input type="password" placeholder="Password" name="password" />
-				<a href="#">Forgot your password?</a>
-				<input type="submit" value="Sign in" class="btn-btn-1">
-				{% for message in get_flashed_messages() %}
-						{{message}}
-			
-					{% endfor %}
-			</form>
-			<h1 >{{info}}</h1>
-		</div>
-		<div class="overlay-container">
-			<div class="overlay">
-				<div class="overlay-panel overlay-left">
-					<h1>Welcome Back!</h1>
-					<p>To keep connected with us please login with your personal info</p>
-					<button class="ghost" id="signIn">Sign In</button>
-				</div>
-				<div class="overlay-panel overlay-right">
-					<h1>Hello, Friend!</h1>
-					<p>Enter your personal details and start journey with us</p>
-					<button class="ghost" id="signUp">Sign Up</button>
-				</div>
-			</div>
-		</div>
-	</div>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, var(--gray-100), var(--gray-200));
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background-color: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            min-height: 600px;
+        }
+
+        .form-container {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            transition: all 0.6s ease-in-out;
+        }
+
+        .sign-in-container {
+            left: 0;
+            width: 50%;
+            z-index: 2;
+        }
+
+        .sign-up-container {
+            left: 0;
+            width: 50%;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .container.right-panel-active .sign-in-container {
+            transform: translateX(100%);
+        }
+
+        .container.right-panel-active .sign-up-container {
+            transform: translateX(100%);
+            opacity: 1;
+            z-index: 5;
+        }
+
+        form {
+            background-color: var(--white);
+            display: flex;
+            flex-direction: column;
+            padding: 0 50px;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        h1 {
+            font-weight: bold;
+            margin: 0 0 20px;
+            color: var(--gray-700);
+            font-size: 2rem;
+        }
+
+        span {
+            color: var(--gray-700);
+            margin-bottom: 20px;
+        }
+
+        input {
+            background-color: var(--gray-100);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin: 8px 0;
+            width: 100%;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            background-color: var(--white);
+            box-shadow: 0 0 0 2px var(--primary-color);
+        }
+
+        .btn-btn-1 {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 45px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-btn-1:hover {
+            transform: translateY(-2px);
+        }
+
+        .overlay-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: transform 0.6s ease-in-out;
+            z-index: 100;
+        }
+
+        .container.right-panel-active .overlay-container {
+            transform: translateX(-100%);
+        }
+
+        .overlay {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            position: relative;
+            left: -100%;
+            height: 100%;
+            width: 200%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .container.right-panel-active .overlay {
+            transform: translateX(50%);
+        }
+
+        .overlay-panel {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 40px;
+            text-align: center;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .overlay-left {
+            transform: translateX(-20%);
+        }
+
+        .overlay-right {
+            right: 0;
+            transform: translateX(0);
+        }
+
+        .container.right-panel-active .overlay-left {
+            transform: translateX(0);
+        }
+
+        .container.right-panel-active .overlay-right {
+            transform: translateX(20%);
+        }
+
+        .overlay-panel h1 {
+            color: var(--white);
+        }
+
+        .overlay-panel p {
+            color: var(--white);
+            font-size: 0.9rem;
+            margin: 20px 0 30px;
+        }
+
+        .ghost {
+            background: transparent;
+            border: 2px solid var(--white);
+            color: var(--white);
+            border-radius: 8px;
+            padding: 12px 45px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ghost:hover {
+            background: var(--white);
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                min-height: 800px;
+                margin: 20px;
+            }
+
+            .form-container {
+                width: 100%;
+                position: absolute;
+                top: 0;
+                height: 50%;
+            }
+
+            .sign-in-container {
+                top: 50%;
+                transform: translateY(-100%);
+            }
+
+            .overlay-container {
+                width: 100%;
+                height: 50%;
+                top: 50%;
+                left: 0;
+            }
+
+            .overlay {
+                height: 200%;
+                left: -100%;
+                width: 100%;
+            }
+
+            .overlay-panel {
+                width: 100%;
+                height: 50%;
+            }
+
+            .overlay-right {
+                top: 50%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="form-container sign-up-container">
+            <form action="/signup" method="POST">
+                <h1>Create Account</h1>
+                <span>or use your email for registration</span>
+                <input type="text" placeholder="Name" name="name" required />
+                <input type="email" placeholder="Email" name="email" required />
+                <input type="password" placeholder="Password" name="password" required />
+                <input type="submit" value="Sign Up" class="btn-btn-1" />
+                {% for message in get_flashed_messages() %}
+                    <span style="color: #ef4444;">{{message}}</span>
+                {% endfor %}
+            </form>
+            {% if info %}
+                <h1>{{info}}</h1>
+            {% endif %}
+        </div>
+        <div class="form-container sign-in-container">
+            <form action="/login" method="POST">
+                <h1>Sign In</h1>
+                <span>use your account</span>
+                <input type="email" placeholder="Email" name="email" required />
+                <input type="password" placeholder="Password" name="password" required />
+                <a href="#" style="color: var(--primary-color); margin: 15px 0; text-decoration: none;">Forgot your password?</a>
+                <input type="submit" value="Sign In" class="btn-btn-1" />
+                {% for message in get_flashed_messages() %}
+                    <span style="color: #ef4444;">{{message}}</span>
+                {% endfor %}
+            </form>
+            {% if info %}
+                <h1>{{info}}</h1>
+            {% endif %}
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Hello, Friend!</h1>
+                    <p>Enter your personal details and start journey with us</p>
+                    <button class="ghost" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
+
+        signUpButton.addEventListener('click', () => {
+            container.classList.add('right-panel-active');
+        });
+
+        signInButton.addEventListener('click', () => {
+            container.classList.remove('right-panel-active');
+        });
+    </script>
 </body>
+</html>
