@@ -21,7 +21,7 @@ config={
     "appId": "1:351368719023:web:d2a5f389def9347dfb025a",
     "measurementId": "G-XC05M13SYK"
 }
-cred = credentials.Certificate("/Users/deepuprajapati/Documents/Deepu_Python_projects/smartShare/Smartshare/nyaysetu-c6500-firebase-adminsdk-jr9vt-288feca55d.json")
+cred = credentials.Certificate("nyaysetu-c6500-firebase-adminsdk-jr9vt-288feca55d.json")
 path_on_cloud="files/"
 
 firebase = firebase_admin.initialize_app(cred,{
