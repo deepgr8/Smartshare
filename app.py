@@ -76,6 +76,7 @@ def login():
 @app.route("/create")
 def createaccount():
     return render_template('create.html')
+from datetime import datetime, timedelta, timezone
 
 @app.route('/dashboard')
 def dashboard():
@@ -83,38 +84,70 @@ def dashboard():
         return redirect(url_for('login'))
     
     uid = session['user_id']
-    # Get user info from Firebase
-
-    
-    files = []
-    user_files_ref = db.reference(f'users/{uid}/files').get()
     user_email = session['email']
+    files = []
+    
+    user_files_ref = db.reference(f'users/{uid}/files').get()
+    now = datetime.now(timezone.utc)
 
     if user_files_ref:
         for file_id, file_data in user_files_ref.items():
             blob = bucket.blob(file_data['path'])
-            signed_url = blob.generate_signed_url(
-                expiration=datetime.timedelta(minutes=5),
-                method='GET',
-                response_disposition=f'attachment; filename="{file_data["name"]}"'
-            )
             
+            # Get timestamps in UTC
+            uploaded_at = datetime.fromtimestamp(file_data['uploaded_at'] / 1000, tz=timezone.utc)
+            expiry_minutes = file_data.get('expiry_minutes', 5)
+            expiration_time = uploaded_at + timedelta(minutes=expiry_minutes)
+            
+            # Check if file should be deleted
+            if now > expiration_time + timedelta(minutes=5):  # Grace period
+                # Delete expired file
+                blob.delete()
+                db.reference(f'users/{uid}/files/{file_id}').delete()
+                continue
+                
+            # Calculate remaining time
+            remaining = expiration_time - now
+            expires_in = max(0, int(remaining.total_seconds() // 60))
+            is_expired = remaining.total_seconds() <= 0
+
+            # Generate URL only if not expired
+            signed_url = None
+            if not is_expired:
+                signed_url = blob.generate_signed_url(
+                    expiration=expiration_time,
+                    method='GET',
+                    response_disposition=f'attachment; filename="{file_data["name"]}"'
+                )
+
             files.append({
                 'name': file_data['name'],
                 'url': signed_url,
-                'expires_in': 5
+                'expires_in': expires_in,
+                'expired': is_expired
             })
 
-    return render_template('dashboard.html', files=files, user_email=user_email)
+    return render_template('dashboard.html', 
+                         files=files,
+                         user_email=user_email)
 
 @app.route('/uploader', methods=['POST'])
 def uploader():
     if 'user_id' not in session:
         return redirect(url_for('login'))
+    
     uid = session['user_id']
+    expiry_minutes = int(request.form.get('expiry_time', 5))
+    
+    # Validate maximum expiry time (7 days)
+    if expiry_minutes > 10080:
+        expiry_minutes = 10080
+        flash("Maximum expiry time is 7 days")
+
     if request.method == 'POST':
         f = request.files['fileinput']
         display_name = request.form.get('nameinput', f.filename)
+        
         if f:
             blob_path = f"users/{uid}/files/{f.filename}"
             blob = bucket.blob(blob_path)
@@ -123,12 +156,13 @@ def uploader():
             file_data = {
                 'name': display_name,
                 'path': blob_path,
-                'uploaded_at': {'.sv': 'timestamp'}
+                'uploaded_at': {'.sv': 'timestamp'},
+                'expiry_minutes': expiry_minutes
             }
             db.reference(f'users/{uid}/files').push(file_data)
             flash('File uploaded successfully!')
+        
         return redirect(url_for('dashboard'))
-
 @app.route("/logout", methods=["GET"])
 def logout():
     session.clear()

@@ -372,6 +372,14 @@
                 width: 100%;
             }
         }
+        .expired {
+            color: #dc3545 !important;
+        }
+
+        .btn-disabled {
+            background: #6c757d !important;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -409,6 +417,14 @@
                         <label for="nameInput" class="label">Enter Your Full Name</label>
                         <input type="text" id="nameInput" name="nameinput" class="input-field" required>
                         <input type="file" id="fileInput" name="fileinput" class="input-field" required>
+                        <label for="expiryTime" class="label">Expiry Time</label>
+                        <select id="expiryTime" name="expiry_time" class="input-field" required>
+                            <option value="1">1 Minute</option>
+                            <option value="5">5 Minutes</option>
+                            <option value="10">10 Minutes</option>
+                            <option value="30">30 Minutes</option>
+                            <option value="120">2 Hours</option>
+                        </select>
                         <button class="button-submit" type="submit">
                             <i class="fas fa-upload"></i> Upload File
                         </button>
@@ -425,21 +441,28 @@
                             <i class="fas fa-file"></i> {{ file.name }}
                         </div>
                         <div class="expiry-info">
-                            <i class="fas fa-clock"></i> Expires in {{ file.expires_in }} minutes
+                            <i class="fas fa-clock"></i>
+                            {% if file.expired %}
+                                <div class="expiry-info expired">
+                                    <i class="fas fa-ban"></i> Expired
+                                </div>
+                            {% else %}
+                                Expires in {{ file.expires_in }} minutes
+                            {% endif %}
                         </div>
                     </div>
                     <div class="file-actions">
-                        <a href="{{ file.url }}" class="btn btn-download">
-                            <i class="fas fa-download"></i> Download
-                        </a>
-                        <button class="btn btn-copy" onclick="copyToClipboard('{{ file.url }}')">
-                            <i class="fas fa-copy"></i> Copy Link
-                        </button>
+                        {% if file.expired %}
+                            <button class="btn btn-disabled" disabled>Expired</button>
+                        {% else %}
+                            <a href="{{ file.url }}" class="btn btn-download">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                            <button class="btn btn-copy" onclick="copyToClipboard('{{ file.url }}')">
+                                <i class="fas fa-copy"></i> Copy Link
+                            </button>
+                        {% endif %}
                     </div>
-                </div>
-                {% else %}
-                <div class="no-files">
-                    <i class="fas fa-folder-open"></i> No files uploaded yet
                 </div>
                 {% endfor %}
             </div>
