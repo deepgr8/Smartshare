@@ -5,11 +5,13 @@ SmartShare is a smart and secure file-sharing web application designed to ensure
 ## Live Demo
 [SmartShare Live URL](https://smartshare.vercel.app/)
 
-## Features
-- **Secure File Sharing**: Built with Python and Flask, ensuring robust backend performance.
-- **Data Storage**: Integrated Google Firebase for secure user data and file storage.
-- **Improved Efficiency**: Enhanced file-sharing speed by 30%.
-- **Real-Time Feedback**: Dynamic interface features with JavaScript for an intuitive user experience.
+## 🚀 **Features**  
+- ✅ **Self-Destructing Links** – Shared files automatically expire after a set duration.  
+- ✅ **End-to-End Encryption** – Ensuring secure data transmission and storage.  
+- ✅ **Firebase Authentication** – Secure user authentication (Login/Signup).  
+- ✅ **Flask Backend** – RESTful API for file handling and expiration logic.  
+- ✅ **Real-Time Database** – Using Firebase Firestore for fast and efficient data storage.  
+- ✅ **User-Friendly Interface** – Simple and intuitive UI for seamless file sharing.  
 
 ## Technologies Used
 - **Backend**: Python, Flask
