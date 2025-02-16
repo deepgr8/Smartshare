@@ -1,17 +1,14 @@
-
 from email import message
 import os
 import pyrebase
-from flask import Flask, render_template, request, send_file
-from flask import flash
+from flask import Flask, render_template, request, send_file, redirect, url_for, session, flash
 import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import credentials, firestore, storage,db
+from firebase_admin import credentials, storage, db
+import datetime
 import tempfile
 
-
 app = Flask(__name__)
-config={
+config = {
     "apiKey": "AIzaSyCqokofnUII64JCU2XBWwETDmv3ULFFFGE",
     "authDomain": "nyaysetu-c6500.firebaseapp.com",
     "databaseURL": "https://nyaysetu-c6500-default-rtdb.firebaseio.com",
@@ -21,141 +18,121 @@ config={
     "appId": "1:351368719023:web:d2a5f389def9347dfb025a",
     "measurementId": "G-XC05M13SYK"
 }
-cred = credentials.Certificate("nyaysetu-c6500-firebase-adminsdk-jr9vt-288feca55d.json")
-path_on_cloud="files/"
 
-firebase = firebase_admin.initialize_app(cred,{
-    'databaseURL':'https://nyaysetu-c6500-default-rtdb.firebaseio.com/',
-    "storageBucket": "nyaysetu-c6500.appspot.com"
-
+cred = credentials.Certificate("/Users/deepuprajapati/Documents/Deepu_Python_projects/smartShare/Smartshare/nyaysetu-c6500-firebase-adminsdk-jr9vt-288feca55d.json")
+firebase = firebase_admin.initialize_app(cred, {
+    'databaseURL': config['databaseURL'],
+    'storageBucket': config['storageBucket']
 })
-firebase1= pyrebase.initialize_app(config)
 
+firebase1 = pyrebase.initialize_app(config)
+auth = firebase1.auth()
 bucket = storage.bucket()
-auth=firebase1.auth()
 
-app.config["SECRET_KEY"] ="thidifh"
-# storage=fire
+app.config["SECRET_KEY"] = "thidifh"
+
+@app.before_request
+def check_authentication():
+    allowed_endpoints = ['ho', 'login', 'signup', 'createaccount']
+    if request.endpoint not in allowed_endpoints and 'user_id' not in session:
+        return redirect(url_for('login'))
 
 @app.route('/')
 def ho():
-    return render_template("/index.html")
+    return render_template("index.html")
 
-
-@app.route("/signup", methods=['post', 'get'])
+@app.route("/signup", methods=['POST', 'GET'])
 def signup():
-    print("message", request.form)
-    
-    message = 'Signup to your account'
-
-    if request.method == "POST":
-        try:
-            name = request.form.get("name")
-
-            email = request.form.get("email")
-            password1 = request.form.get("password")
-
-            user=auth.create_user_with_email_and_password(email,password1)
-            auth.get_account_info(user['idToken'])
-            return render_template("/dashboard.html")
-        
-        except Exception as e:
-            e="Check your email address"
-            flash(e)
-            return render_template("/create.html")
-        
-
-
-@app.route("/login", methods=["POST", "GET"])
-def login():
-    messages ='Please check your username and password'
-
     if request.method == "POST":
         try:
             email = request.form.get("email")
             password = request.form.get("password")
-            
-            user=auth.sign_in_with_email_and_password(email, password)
-            auth.get_account_info(user['idToken'])
-
-            return render_template("/dashboard.html", message=messages)
+            user = auth.create_user_with_email_and_password(email, password)
+            session['user_id'] = user['localId']
+            session['id_token'] = user['idToken']
+            session['email'] = email
+            return redirect(url_for('dashboard'))
         except Exception as e:
-            e='Please check your username and password'
-            flash(e)
-            return render_template("/create.html", message=messages )
-        
+            flash("Error creating account. Please try again.")
+            return render_template("create.html")
+    return render_template("create.html")
 
+@app.route("/login", methods=["POST", "GET"])
+def login():
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+        try:
+            user = auth.sign_in_with_email_and_password(email, password)
+            session['user_id'] = user['localId']
+            session['id_token'] = user['idToken']
+            session['email'] = email
+            return redirect(url_for('dashboard'))
+        except:
+            flash("Invalid credentials. Please try again.")
+            return render_template("create.html")
+    return render_template("create.html")
 
 @app.route("/create")
 def createaccount():
     return render_template('create.html')
 
-@app.route("/sendfile")
-def send():
-    url = request.args.get("url")
-
-    filename=os.path.basename(url)
-    import requests
-    r = requests.get(url, allow_redirects=True)
+@app.route('/dashboard')
+def dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
     
-    ex = r.headers.get('content-type').split('/')[-1]
-    open(f'{filename}.{ex}', 'wb').write(r.content)
-    flash("successfully Downloaded",'success')
-    return send_file(f'{filename}.{ex}', as_attachment=True)
+    uid = session['user_id']
+    # Get user info from Firebase
 
+    
+    files = []
+    user_files_ref = db.reference(f'users/{uid}/files').get()
+    user_email = session['email']
 
+    if user_files_ref:
+        for file_id, file_data in user_files_ref.items():
+            blob = bucket.blob(file_data['path'])
+            signed_url = blob.generate_signed_url(
+                expiration=datetime.timedelta(minutes=5),
+                method='GET',
+                response_disposition=f'attachment; filename="{file_data["name"]}"'
+            )
+            
+            files.append({
+                'name': file_data['name'],
+                'url': signed_url,
+                'expires_in': 5
+            })
 
+    return render_template('dashboard.html', files=files, user_email=user_email)
 
-
-@app.route('/uploader', methods=['POST', 'GET'])
+@app.route('/uploader', methods=['POST'])
 def uploader():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    uid = session['user_id']
     if request.method == 'POST':
         f = request.files['fileinput']
-        message="Successfully Uploaded"
-        global name
-        name=request.form.get('nameinput')
-        
-        typee=f.content_type
-        print(typee)
-        temp = tempfile.NamedTemporaryFile(delete=False)
-        f.save(temp.name)
-        with open(temp.name, 'rb') as file:
-            content = file.read()
-            # print(content)
+        display_name = request.form.get('nameinput', f.filename)
+        if f:
+            blob_path = f"users/{uid}/files/{f.filename}"
+            blob = bucket.blob(blob_path)
+            blob.upload_from_file(f, content_type=f.content_type)
             
-            name=f.filename
-            # file_data = requests.get(content).content
-            blob = bucket.blob(name)
-            blob.upload_from_string(
-               content,
-               content_type=typee)
-            blob.make_public()
-            print(blob.public_url)
-            
-            # aler="Successfully Uploaded"
-            # message=str(aler)
-            
-            
-            users_data={'name':name, 'public_url':blob.public_url}
-            db.reference('users').push(users_data)
-            flash(message)
-        return render_template("index.html")
+            file_data = {
+                'name': display_name,
+                'path': blob_path,
+                'uploaded_at': {'.sv': 'timestamp'}
+            }
+            db.reference(f'users/{uid}/files').push(file_data)
+            flash('File uploaded successfully!')
+        return redirect(url_for('dashboard'))
 
-@app.route('/search', methods=['POST'])
-def download():
-    info = db.reference('users').get()
-    b = []
-    for key, value in info.items():
-        b.append(value)
-        print(value)
-    return render_template("downloads.html", a=b)
-
-
-@app.route("/logout", methods=['POST', 'GET'])
+@app.route("/logout", methods=["GET"])
 def logout():
-    auth.current_user=None
-    return render_template("index.html")
-
+    session.clear()
+    return redirect(url_for('ho'))
 
 if __name__ == "__main__":
     app.run(debug=True)

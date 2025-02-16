@@ -5,134 +5,482 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Share - Smart Sharing</title>
-    <link rel="stylesheet" href="../static/styles/style.css">
-</head>
-<style>
-  .upload-files {
-      width: 100%;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-  }
-  
-  .drop-zone {
-      background: #fff;
-      border: 2px dashed #ddd;
-      border-radius: 10px;
-      padding: 2rem;
-      text-align: center;
-      position: relative;
-      margin: 1rem;
-  }
-  
-  .icon-container {
-      margin-bottom: 2rem;
-  }
-  
-  .file-icon {
-      max-width: 100%;
-      height: auto;
-      width: 200px;
-  }
-  
-  .label {
-      display: block;
-      margin-bottom: 1rem;
-      font-size: 1.1rem;
-      color: #333;
-  }
-  
-  .input-field {
-      width: 100%;
-      max-width: 400px;
-      padding: 0.8rem;
-      margin-bottom: 1rem;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 1rem;
-  }
-  
-  .button-submit {
-      background-color: #4a90e2;
-      color: white;
-      padding: 0.8rem 2rem;
-      border: none;
-      border-radius: 5px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color 0.3s;
-  }
-  
-  .button-submit:hover {
-      background-color: #357abd;
-  }
-  
-  .create-account {
-      display: block;
-      margin-top: 1rem;
-      color: #4a90e2;
-      text-decoration: none;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 600px) {
-      .drop-zone {
-          padding: 1rem;
-          margin: 0.5rem;
-      }
-  
-      .input-field {
-          max-width: 100%;
-      }
-  
-      .file-icon {
-          width: 150px;
-      }
-  
-      .button-submit {
-          width: 100%;
-          max-width: 400px;
-      }
-  }
-  </style>
-<body>
-   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .main-div {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: linear-gradient(to right, #4a90e2, #357abd);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .brand-name {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4a90e2;
+            font-weight: bold;
+        }
+
+        .button-logout {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .button-logout:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .content-wrapper {
+            display: flex;
+            gap: 2rem;
+            min-height: calc(100vh - 200px);
+        }
+
+        .upload-files {
+            flex: 0 0 40%;
+            min-width: 400px;
+        }
+
+        .drop-zone {
+            background: #fff;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            margin: 1rem;
+        }
+        
+        .icon-container {
+            margin-bottom: 2rem;
+        }
+        
+        .file-icon {
+            max-width: 100%;
+            height: auto;
+            width: 200px;
+        }
+        
+        .label {
+            display: block;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: #333;
+        }
+        
+        .input-field {
+            width: 100%;
+            max-width: 400px;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .button-submit {
+            background-color: #4a90e2;
+            color: white;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .button-submit:hover {
+            background-color: #357abd;
+        }
+        
+        .create-account {
+            display: block;
+            margin-top: 1rem;
+            color: #4a90e2;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 600px) {
+            .drop-zone {
+                padding: 1rem;
+                margin: 0.5rem;
+            }
+        
+            .input-field {
+                max-width: 100%;
+            }
+        
+            .file-icon {
+                width: 150px;
+            }
+        
+            .button-submit {
+                width: 100%;
+                max-width: 400px;
+            }
+        }
+
+        .create-account:hover {
+            color: #357abd;
+        }
+
+        .files-container {
+            flex: 0 0 60%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-content: flex-start;
+        }
+
+        .file-card {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            width: calc(50% - 10px);
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s ease;
+        }
+
+        .file-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .file-name {
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .expiry-info {
+            font-size: 0.9em;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-download {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-copy {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .no-files {
+            width: 100%;
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-size: 1.1rem;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 20px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+            
+            .upload-files,
+            .files-container {
+                flex: none;
+                width: 100%;
+                min-width: unset;
+            }
+            
+            .file-card {
+                width: 100%;
+            }
+
+            .drop-zone {
+                height: auto;
+                margin-bottom: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .brand-name {
+                font-size: 1.2rem;
+            }
+
+            .user-info span {
+                display: none;
+            }
+
+            .navbar-user {
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .main-div {
+                padding: 10px;
+            }
+
+            .navbar {
+                margin-bottom: 1rem;
+            }
+
+            .content-wrapper {
+                gap: 1rem;
+            }
+
+            .drop-zone {
+                padding: 1rem;
+            }
+
+            .file-icon {
+                width: 100px;
+            }
+
+            .input-field,
+            .button-submit {
+                max-width: 100%;
+            }
+
+            .file-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
     <div class="main-div">
-      <div class="header">
-        <form action="/search" method="POST">
-          <button class="button-download" type="submit" name="search">Downloads</button>
-        </form>
-      </div>
-  
-      <section class="upload-files">
-        <div class="drop-zone">
-            <div class="icon-container">
-                <img src="../static/file-sharing.png" alt="file icon" draggable="false" class="file-icon">
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <i class="fas fa-share-alt fa-lg" style="color: white;"></i>
+                <span class="brand-name">The Share</span>
             </div>
-            <form action="/uploader" method="POST" enctype="multipart/form-data" name="myForm" onsubmit="return validateform()">
-                <label for="nameInput" class="label">Enter Your Full Name</label>
-                <input type="text" id="nameInput" name="nameinput" class="input-field">
-                <input type="file" id="fileInput" name="fileinput" class="input-field">
-                <button class="button-submit" type="submit">Submit</button>
-            </form>
-            <a href="/create" class="create-account">Not a member? Create account</a>
+            
+            <div class="navbar-user">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        {{ user_email[0].upper() }}
+                    </div>
+                    <span>{{ user_email }}</span>
+                </div>
+                
+                <form action="/logout" method="GET">
+                    <button class="button-logout" type="submit" name="search">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </div>
+        </nav>
+
+        <div class="content-wrapper">
+            <section class="upload-files">
+                <div class="drop-zone">
+                    <div class="icon-container">
+                        <img src="../static/file-sharing.png" alt="file icon" draggable="false" class="file-icon">
+                    </div>
+                    <form action="/uploader" method="POST" enctype="multipart/form-data" name="myForm" onsubmit="return validateform()">
+                        <label for="nameInput" class="label">Enter Your Full Name</label>
+                        <input type="text" id="nameInput" name="nameinput" class="input-field" required>
+                        <input type="file" id="fileInput" name="fileinput" class="input-field" required>
+                        <button class="button-submit" type="submit">
+                            <i class="fas fa-upload"></i> Upload File
+                        </button>
+                    </form>
+                    <a href="/create" class="create-account">Not a member? Create account</a>
+                </div>
+            </section>
+
+            <div class="files-container">
+                {% for file in files %}
+                <div class="file-card">
+                    <div>
+                        <div class="file-name">
+                            <i class="fas fa-file"></i> {{ file.name }}
+                        </div>
+                        <div class="expiry-info">
+                            <i class="fas fa-clock"></i> Expires in {{ file.expires_in }} minutes
+                        </div>
+                    </div>
+                    <div class="file-actions">
+                        <a href="{{ file.url }}" class="btn btn-download">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                        <button class="btn btn-copy" onclick="copyToClipboard('{{ file.url }}')">
+                            <i class="fas fa-copy"></i> Copy Link
+                        </button>
+                    </div>
+                </div>
+                {% else %}
+                <div class="no-files">
+                    <i class="fas fa-folder-open"></i> No files uploaded yet
+                </div>
+                {% endfor %}
+            </div>
         </div>
-    </section>
-  
-      <div class="alert" id="successMessage" role="alert">
-        {% with message=get_flashed_messages() %}
-        <p>{{ message }}</p>
-        {% endwith %}
-      </div>
     </div>
-  
+
+    <div id="toast" class="toast">Link copied to clipboard!</div>
+
     <script>
-      window.setTimeout(() => {
-        const successMessage = document.getElementById("successMessage");
-        if (successMessage) successMessage.style.display = 'none';
-      }, 4000);
+        function copyToClipboard(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                showToast();
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2000);
+        }
+
+        function validateform() {
+            const nameInput = document.getElementById('nameInput');
+            const fileInput = document.getElementById('fileInput');
+            
+            if (!nameInput.value.trim()) {
+                alert('Please enter your name');
+                return false;
+            }
+            
+            if (!fileInput.files.length) {
+                alert('Please select a file to upload');
+                return false;
+            }
+            
+            return true;
+        }
     </script>
-    <script src="../static/index.js"></script>
 </body>
 </html>
